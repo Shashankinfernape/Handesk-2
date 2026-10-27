@@ -182,7 +182,7 @@ void TailscaleHook::applyLicenseBannerRemoval(void* imageBase, size_t imageSize)
 
     uint8_t* base = reinterpret_cast<uint8_t*>(imageBase);
 
-    // 1. Force isFreeLicenseBannerHidden query functions to return TRUE (1)
+    // 1. Force isFreeLicense / banner query functions to return 1 (paid license, no banner)
     const uint32_t patchRvas[] = { 0x0090A4D0, 0x009B0EF0, 0x00909ED0, 0x009B1620 };
     for (uint32_t rva : patchRvas) {
         if (rva + 3 <= imageSize) {
@@ -211,21 +211,65 @@ void TailscaleHook::applyLicenseBannerRemoval(void* imageBase, size_t imageSize)
     }
 
     // 3. Clear free banner message strings
-    const char* prefixes[] = {
+    const char* bannerPrefixes[] = {
         "ad.banner.free=",
         "ad.banner.free.default=",
         "ad.banner.free.no_buy="
     };
-
-    for (const char* prefix : prefixes) {
+    for (const char* prefix : bannerPrefixes) {
         size_t prefixLen = strlen(prefix);
         for (size_t i = 0; i <= imageSize - prefixLen; ++i) {
             if (memcmp(base + i, prefix, prefixLen) == 0) {
                 size_t eqPos = i + prefixLen;
                 size_t end = eqPos;
-                while (end < imageSize && base[end] != '\n' && base[end] != '\r' && base[end] != '\0') {
-                    end++;
+                while (end < imageSize && base[end] != '\n' && base[end] != '\r' && base[end] != '\0') end++;
+                if (end > eqPos) {
+                    DWORD oldProtect;
+                    if (VirtualProtect(base + eqPos, end - eqPos, PAGE_EXECUTE_READWRITE, &oldProtect)) {
+                        memset(base + eqPos, ' ', end - eqPos);
+                        VirtualProtect(base + eqPos, end - eqPos, oldProtect, &oldProtect);
+                    }
                 }
+            }
+        }
+    }
+
+    // 4. [AnyHandesk] Session Time Limit Elimination
+    //    Zero-out the auto_disconnect_timer value so the free session never expires.
+    const char* timerKey = "ad.license.info.auto_disconnect_timer";
+    size_t timerKeyLen = strlen(timerKey);
+    for (size_t i = 0; i + timerKeyLen + 2 < imageSize; ++i) {
+        if (memcmp(base + i, timerKey, timerKeyLen) == 0) {
+            size_t valStart = i + timerKeyLen;
+            while (valStart < imageSize && (base[valStart] == '=' || base[valStart] == ' ')) valStart++;
+            size_t valEnd = valStart;
+            while (valEnd < imageSize && base[valEnd] >= '0' && base[valEnd] <= '9') valEnd++;
+            if (valEnd > valStart) {
+                size_t valLen = valEnd - valStart;
+                DWORD oldProtect;
+                if (VirtualProtect(base + valStart, valLen, PAGE_EXECUTE_READWRITE, &oldProtect)) {
+                    base[valStart] = '0';
+                    if (valLen > 1) memset(base + valStart + 1, ' ', valLen - 1);
+                    VirtualProtect(base + valStart, valLen, oldProtect, &oldProtect);
+                }
+            }
+        }
+    }
+
+    // 5. [AnyHandesk] Neutralize session disconnect countdown strings
+    const char* countdownPrefixes[] = {
+        "ad.status.app.status_bar.seconds=",
+        "ad.status.app.status_bar.minutes=",
+        "ad.banner.disconnect_countdown."
+    };
+    for (const char* prefix : countdownPrefixes) {
+        size_t prefixLen = strlen(prefix);
+        for (size_t i = 0; i + prefixLen < imageSize; ++i) {
+            if (memcmp(base + i, prefix, prefixLen) == 0) {
+                size_t eqPos = i + prefixLen;
+                while (eqPos < imageSize && base[eqPos] == '=') eqPos++;
+                size_t end = eqPos;
+                while (end < imageSize && base[end] != '\n' && base[end] != '\r' && base[end] != '\0') end++;
                 if (end > eqPos) {
                     DWORD oldProtect;
                     if (VirtualProtect(base + eqPos, end - eqPos, PAGE_EXECUTE_READWRITE, &oldProtect)) {
@@ -237,7 +281,6 @@ void TailscaleHook::applyLicenseBannerRemoval(void* imageBase, size_t imageSize)
         }
     }
 }
-
 void TailscaleHook::printStatusBanner() {
     detectNetworkAddresses();
 
@@ -254,6 +297,7 @@ void TailscaleHook::printStatusBanner() {
     oss << " Local LAN IP      : " << s_lanIp << ":" << s_directPort << "\n";
     oss << " Listening Port    : " << s_directPort << " (Direct P2P TCP/UDP)\n";
     oss << " Cloud Relay       : DISABLED (100% Peer-to-Peer)\n";
+    oss << " Session Time Limit: ELIMINATED (unlimited sessions)\n";
     oss << " Video Codec       : DeskRT (32x32 Tile Differential)\n";
     oss << "==============================================================\n";
     oss << " Ready for incoming connection from Android or Windows client.\n";
