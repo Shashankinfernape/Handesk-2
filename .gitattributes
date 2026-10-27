@@ -1,0 +1,18 @@
+# Ensure consistent line endings
+* text=auto eol=lf
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Language classification overrides for GitHub Linguist
+*.h linguist-language=C++
+
+# Exclude decompiled Apktool disassembly from language statistics
+AnyDesk-Android-Reconstructed/apktool_src/** linguist-vendored linguist-generated
+
+# Exclude decompiled APK Java bytecode extraction from language statistics
+AnyDesk-Android-Reconstructed/app/src/main/java/** linguist-vendored linguist-generated
+
+# Retain the clean-room native DeskRT capture bridge and P2P bridge in language statistics
+AnyDesk-Android-Reconstructed/app/src/main/java/com/anydesk/jni/DeskRTCaptureBridge.java linguist-vendored=false linguist-generated=false
+AnyDesk-Android-Reconstructed/app/src/main/java/com/anydesk/jni/P2PConnectionBridge.java linguist-vendored=false linguist-generated=false
+AnyDesk-Android-Reconstructed/app/src/main/java/com/anydesk/anydeskandroid/HandeskModeToggle.java linguist-vendored=false linguist-generated=false

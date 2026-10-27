@@ -1,0 +1,35 @@
+# Build outputs
+target/
+build/
+build_msvc32/
+bin/
+obj/
+*.obj
+*.ilk
+*.pdb
+*.tlog
+*.log
+
+# Gradle & Android
+.gradle/
+.idea/
+local.properties
+*.idsig
+app/build/
+apktool_src/build/
+apktool_src/dist/
+AnyHandesk_unsigned.apk
+
+# Release binaries (distributed via GitHub Releases)
+release/
+*.apk
+AnyHandesk*.exe
+win_app.dll
+screenshot_test.png
+
+# Keep core library in Windows source
+!AnyDesk-Windows-Reconstructed/src/core/win_app.dll
+
+# OS generated
+.DS_Store
+Thumbs.db
