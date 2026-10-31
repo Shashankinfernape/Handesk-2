@@ -35,34 +35,17 @@
     return v1
 
     :cond_0
-    invoke-virtual {v0}, Lcom/anydesk/anydeskandroid/gui/element/AdEditText;->getText()Ljava/lang/String;
-
-    move-result-object v2
-
-    if-nez v2, :cond_check
-
-    const-string v2, ""
-
-    :cond_check
-    const-string v3, "10."
-
-    invoke-virtual {v2, v3}, Ljava/lang/String;->startsWith(Ljava/lang/String;)Z
-
-    move-result v2
+    const-string v2, "10.43.147.181:7070"
 
     const/4 v3, 0x0
 
-    if-eqz v2, :cond_1
-
-    const-string v2, "100.76.1.80:7070"
-
     invoke-virtual {v0, v2, v3}, Lcom/anydesk/anydeskandroid/gui/element/AdEditText;->l(Ljava/lang/String;Z)V
 
     invoke-virtual {p1}, Landroid/view/View;->getContext()Landroid/content/Context;
 
     move-result-object p1
 
-    const-string v0, "[Handesk] Switched to Tailscale (100.76.1.80:7070)"
+    const-string v0, "[AnyHandesk] Direct Streaming (Zero-VPN Mode Ready)"
 
     invoke-static {p1, v0, v3}, Landroid/widget/Toast;->makeText(Landroid/content/Context;Ljava/lang/CharSequence;I)Landroid/widget/Toast;
 
@@ -70,25 +53,5 @@
 
     invoke-virtual {p1}, Landroid/widget/Toast;->show()V
 
-    goto :goto_0
-
-    :cond_1
-    const-string v2, "10.145.162.181:7070"
-
-    invoke-virtual {v0, v2, v3}, Lcom/anydesk/anydeskandroid/gui/element/AdEditText;->l(Ljava/lang/String;Z)V
-
-    invoke-virtual {p1}, Landroid/view/View;->getContext()Landroid/content/Context;
-
-    move-result-object p1
-
-    const-string v0, "[Handesk] Switched to LAN (10.145.162.181:7070)"
-
-    invoke-static {p1, v0, v3}, Landroid/widget/Toast;->makeText(Landroid/content/Context;Ljava/lang/CharSequence;I)Landroid/widget/Toast;
-
-    move-result-object p1
-
-    invoke-virtual {p1}, Landroid/widget/Toast;->show()V
-
-    :goto_0
     return v1
 .end method

@@ -12,23 +12,10 @@
 #pragma comment(lib, "iphlpapi.lib")
 #pragma comment(lib, "ws2_32.lib")
 
-std::string TailscaleHook::s_tailscaleIp = "";
+std::string TailscaleHook::s_tailscaleIp = "Disabled (Zero-VPN Mode)";
 std::string TailscaleHook::s_lanIp       = "";
 uint16_t    TailscaleHook::s_directPort  = 7070;
 bool        TailscaleHook::s_neutralized = false;
-
-static bool isTailscaleSubnet(const std::string& ip) {
-    if (ip.rfind("100.", 0) != 0) return false;
-    size_t firstDot = ip.find('.');
-    size_t secondDot = ip.find('.', firstDot + 1);
-    if (firstDot == std::string::npos || secondDot == std::string::npos) return false;
-    try {
-        int secondOctet = std::stoi(ip.substr(firstDot + 1, secondDot - firstDot - 1));
-        return secondOctet >= 64 && secondOctet <= 127;
-    } catch (...) {
-        return false;
-    }
-}
 
 static bool isPrivateLanIp(const std::string& ip) {
     if (ip.rfind("192.168.", 0) == 0) return true;
@@ -49,24 +36,9 @@ static bool isPrivateLanIp(const std::string& ip) {
 }
 
 bool TailscaleHook::detectNetworkAddresses() {
-    // 1. Try querying Tailscale CLI
-    FILE* pipe = _popen("tailscale ip -4 2>nul", "r");
-    if (pipe) {
-        char buffer[128] = {0};
-        if (fgets(buffer, sizeof(buffer), pipe) != nullptr) {
-            std::string result(buffer);
-            size_t end = result.find_last_not_of(" \r\n\t");
-            if (end != std::string::npos) {
-                result = result.substr(0, end + 1);
-            }
-            if (isTailscaleSubnet(result)) {
-                s_tailscaleIp = result;
-            }
-        }
-        _pclose(pipe);
-    }
+    s_tailscaleIp = "Disabled (Zero-VPN Mode)";
 
-    // 2. Query Windows IP Helper API for network adapter interfaces
+    // Query Windows IP Helper API for primary network adapter interfaces (Wi-Fi / Ethernet)
     ULONG outBufLen = 16384;
     std::vector<BYTE> buffer(outBufLen);
     PIP_ADAPTER_ADDRESSES pAddresses = reinterpret_cast<IP_ADAPTER_ADDRESSES*>(buffer.data());
@@ -81,11 +53,11 @@ bool TailscaleHook::detectNetworkAddresses() {
 
     if (dwRetVal == NO_ERROR) {
         for (PIP_ADAPTER_ADDRESSES pCurr = pAddresses; pCurr != nullptr; pCurr = pCurr->Next) {
-            // Check adapter name / description
-            std::wstring desc = pCurr->Description ? pCurr->Description : L"";
-            std::wstring name = pCurr->FriendlyName ? pCurr->FriendlyName : L"";
-            bool isTsAdapter = (desc.find(L"Tailscale") != std::wstring::npos ||
-                                name.find(L"Tailscale") != std::wstring::npos);
+            // Skip down/disconnected adapters
+            if (pCurr->OperStatus != IfOperStatusUp) continue;
+
+            // Skip virtual / loopback / tunnel adapters
+            if (pCurr->IfType == IF_TYPE_SOFTWARE_LOOPBACK || pCurr->IfType == IF_TYPE_TUNNEL) continue;
 
             for (PIP_ADAPTER_UNICAST_ADDRESS pUnicast = pCurr->FirstUnicastAddress;
                  pUnicast != nullptr; pUnicast = pUnicast->Next) {
@@ -95,17 +67,16 @@ bool TailscaleHook::detectNetworkAddresses() {
                     inet_ntop(AF_INET, &(sa_in->sin_addr), ipStr, INET_ADDRSTRLEN);
                     std::string ip(ipStr);
 
-                    if (isTailscaleSubnet(ip) || isTsAdapter) {
-                        if (s_tailscaleIp.empty() && ip.rfind("100.", 0) == 0) {
-                            s_tailscaleIp = ip;
-                        }
-                    } else if (isPrivateLanIp(ip)) {
-                        if (s_lanIp.empty()) {
-                            s_lanIp = ip;
-                        }
+                    // Skip loopback and Tailscale subnets (100.64.0.0/10)
+                    if (ip == "127.0.0.1" || ip.rfind("100.", 0) == 0) continue;
+
+                    if (isPrivateLanIp(ip)) {
+                        s_lanIp = ip;
+                        break;
                     }
                 }
             }
+            if (!s_lanIp.empty()) break;
         }
     }
 
@@ -287,23 +258,21 @@ void TailscaleHook::printStatusBanner() {
     std::ostringstream oss;
     oss << "\n";
     oss << "==============================================================\n";
-    oss << "           AnyHandesk Host - P2P Mesh Mode                    \n";
+    oss << "           AnyHandesk Host - DirectLink Mode                  \n";
     oss << "==============================================================\n";
-    if (!s_tailscaleIp.empty()) {
-        oss << " Tailscale Mesh IP : " << s_tailscaleIp << ":" << s_directPort << " [ONLINE]\n";
-    } else {
-        oss << " Tailscale Mesh IP : (Tailscale VPN disconnected)\n";
-    }
-    oss << " Local LAN IP      : " << s_lanIp << ":" << s_directPort << "\n";
+    oss << " Direct Host IP    : " << s_lanIp << ":" << s_directPort << " [ONLINE]\n";
+    oss << " Active Server     : DirectLink Rendezvous & Relay (Port 7070)\n";
+    oss << " Tailscale VPN     : REMOVED (Zero-VPN Direct Streaming)\n";
     oss << " Listening Port    : " << s_directPort << " (Direct P2P TCP/UDP)\n";
-    oss << " Cloud Relay       : DISABLED (100% Peer-to-Peer)\n";
     oss << " Session Time Limit: ELIMINATED (unlimited sessions)\n";
-    oss << " Video Codec       : DeskRT (32x32 Tile Differential)\n";
+    oss << " Free Banner       : REMOVED (Clean Display)\n";
+    oss << " Video Codec       : DeskRT (32x32 Tile Differential @ 60 FPS)\n";
     oss << "==============================================================\n";
-    oss << " Ready for incoming connection from Android or Windows client.\n";
+    oss << " Connect directly using Host IP: " << s_lanIp << ":" << s_directPort << "\n";
     oss << "==============================================================\n\n";
 
     std::string text = oss.str();
+    std::cout << text << std::flush;
 
     HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
     if (hOut && hOut != INVALID_HANDLE_VALUE) {

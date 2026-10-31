@@ -23,6 +23,8 @@ AnyHandesk_unsigned.apk
 # Release binaries (distributed via GitHub Releases)
 release/
 *.apk
+*.zip
+*.exe
 AnyHandesk*.exe
 win_app.dll
 screenshot_test.png

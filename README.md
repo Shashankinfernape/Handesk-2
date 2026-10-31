@@ -1,8 +1,23 @@
-# AnyHandesk — Decentralized P2P Remote Desktop (Tailscale + LAN)
+# AnyHandesk — Decentralized Direct Remote Desktop (Zero-VPN)
 
-AnyHandesk is a reverse-engineered and modded distribution of AnyDesk designed for zero-relay, decentralized peer-to-peer remote access over **Tailscale Mesh (`100.64.0.0/10`)** and **Local LAN (`192.168.x.x` / `10.x.x.x`)**.
+AnyHandesk is a reverse-engineered and modded distribution of AnyDesk powered by the **DirectLink Active Rendezvous & Relay Server**. It provides high-speed, direct remote access **without requiring Tailscale, WireGuard, or any third-party VPN apps**.
 
-All official AnyDesk cloud rendezvous servers (`boot.net.anydesk.com`, `relay.net.anydesk.com`) have been neutralized across both Windows and Android binaries.
+All official AnyDesk cloud rendezvous servers (`boot.net.anydesk.com`, `relay.net.anydesk.com`) are bypassed, commercial license banners are eliminated, and session timeout limits are permanently removed.
+
+---
+
+## Architecture & Improvements
+
+1. **Zero-VPN Direct Streaming (No Tailscale Lag)**:
+   - Eliminates WireGuard user-space packet encapsulation and MTU 1280 fragmentation.
+   - Operates on standard 1500 MTU Ethernet/Wi-Fi frames for buttery-smooth 60 FPS DeskRT differential streaming.
+2. **Active Rendezvous & Relay Server (`directlink-server`)**:
+   - Built from clean reverse-engineered AnyNet core (commit `15eb2c3`).
+   - Listens on TCP/UDP port 7070 for host registrations, STUN address reflection (hole punching), and fallback datagram relay.
+3. **Session Time Limit Eliminated**:
+   - Infinite session duration on both Windows (`win_app.dll` in-memory timer patch) and Android (`jniIsFreeLicense` & `jniGetLicenseConfigInt` patches in `libadext.so`).
+4. **License Banner Removed**:
+   - Commercial red banner neutralized and hidden across all platforms.
 
 ---
 
@@ -10,53 +25,44 @@ All official AnyDesk cloud rendezvous servers (`boot.net.anydesk.com`, `relay.ne
 
 ```
 AnyHandesk/
+├── directlink-core/                   # Rust AnyNet Protocol & Relay Server Core
+│   └── src/bin/server.rs              # Active Rendezvous & Relay Server Binary
+├── directlink-server.exe              # Pre-compiled Active Server (Release)
+├── Start_Active_Server.bat            # 1-Click Server Runner
+│
 ├── AnyDesk-Windows-Reconstructed/     # Windows Host / Client (MSVC Win32 C++17)
 │   ├── AnyHandesk.exe                 # Modded P2P Host Executable
+│   ├── AnyHandesk_loader.exe          # Runtime P2P Hook Loader
 │   ├── win_app.dll                    # Core AnyDesk Native Engine
 │   ├── release/                       # Staged Release Binaries
-│   ├── src/hooks/tailscale_hook.cpp   # Tailscale + LAN Auto-detection & Neutralization
 │   └── build_exe.bat                  # 1-Click Windows MSVC Rebuilder
 │
-└── AnyDesk-Android-Reconstructed/     # Android Client / Host (Apktool + Native ABIs)
-    ├── AnyHandesk.apk                 # Signed Modded P2P Android APK
-    ├── release/                       # Staged Release APK
-    ├── app/src/main/java/             # Full Reconstructed Java Sources
-    │   └── com/anydesk/jni/
-    │       ├── P2PConnectionBridge.java # Tailscale/LAN Bridge & Direct Connect
-    │       └── DeskRTCaptureBridge.java # 32x32 Tile Differential Interceptor
-    └── build_apk.bat                  # 1-Click Android Rebuilder & Signer
+├── AnyDesk-Android-Reconstructed/     # Android Client / Host (Apktool + Native ABIs)
+│   ├── AnyHandesk.apk                 # Signed Modded Android APK
+│   ├── release/                       # Staged Release APK
+│   └── build_apk.bat                  # 1-Click Android Rebuilder & Signer
+│
+├── Launch_AnyHandesk_Standard.bat     # Launch Windows Host (60 FPS)
+├── Launch_AnyHandesk_Lossless.bat     # Launch Windows Host (Lossless Codec)
+└── Launch_AnyHandesk_MobileSaving_30fps.bat # Launch Windows Host (30 FPS Cap)
 ```
-
----
-
-## Key Features
-
-1. **Dual Network Direct Connect**:
-   - **Tailscale Mesh**: Secure WireGuard point-to-point tunnel across devices (`100.x.y.z:7070`).
-   - **Local LAN**: Direct gigabit/LAN speed without Internet routing (`192.168.x.x:7070` / `10.x.x.x:7070`).
-2. **Cloud Domain Neutralization**:
-   - Outbound rendezvous to `boot.net.anydesk.com` is intercepted and rerouted to `127.0.0.1` at the binary and socket level.
-   - Zero telemetry, tracking, or proxying through AnyDesk cloud servers.
-3. **DeskRT Codec Preservation**:
-   - Retains 32×32 dirty tile differential video compression.
-   - Supports optional lossless mode (`--lossless`) and frame rate throttling (`--fps <n>`).
 
 ---
 
 ## Quick Start
 
-### Windows Host
+### 1. Start the Active Server (Optional for Relay / Rendezvous)
+Double-click `Start_Active_Server.bat` or run:
 ```bat
-cd AnyDesk-Windows-Reconstructed
-
-# Check Tailscale & LAN IP status:
-AnyHandesk.exe --p2p-info
-
-# Run with interactive console and direct port:
-AnyHandesk.exe --console --port 7070
+directlink-server.exe --port 7070
 ```
 
-### Android Client
-1. Install `AnyDesk-Android-Reconstructed\release\AnyHandesk.apk` on your Android device.
-2. Ensure Tailscale VPN is connected (or phone is on the same local Wi-Fi).
-3. In the AnyHandesk address bar, enter the Windows Tailscale IP (e.g. `100.76.1.80:7070`) or LAN IP (e.g. `192.168.56.1:7070`) and tap Connect!
+### 2. Start Windows Host
+Double-click `Launch_AnyHandesk_Standard.bat` to run the host on port 7070.
+
+### 3. Connect from Android Phone
+1. Install `release\AnyHandesk.apk` on your Android device.
+2. Open AnyHandesk on your phone.
+3. Enter your host's IP address (e.g. `10.43.147.181:7070`) and tap Connect!
+   - Zero VPN required.
+   - Direct hardware-accelerated DeskRT 60 FPS streaming.

@@ -2090,11 +2090,11 @@
 
     if-eqz v5, :cond_handesk_skip
 
-    const-string v6, "LAN: 10.145.162.181:7070 | TS: 100.76.1.80:7070"
+    const-string v6, "Host IP:Port (e.g. 10.43.147.181:7070)"
 
     invoke-virtual {v5, v6}, Lv6;->setHint(Ljava/lang/String;)V
 
-    const-string v6, "10.145.162.181:7070"
+    const-string v6, "10.43.147.181:7070"
 
     const/4 v7, 0x0
 
