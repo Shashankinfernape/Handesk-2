@@ -30,20 +30,12 @@ set(SOURCES
     src/loader/pe_mapper.cpp
     src/hooks/relay_hook.cpp
     src/hooks/deskrt_hook.cpp                   # DeskRT video codec hooks
-    src/hooks/tailscale_hook.cpp                # Tailscale + LAN P2P direct hooks
+    src/hooks/license_hook.cpp                  # Free banner & timeout removal
 )
 
 if (MSVC)
     list(APPEND SOURCES resources/AnyDesk.rc)
 endif()
-
-# CLI flags supported:
-#   --port <n>        override direct P2P listening port (default 7070)
-#   --console         display live P2P network status console
-#   --p2p-info        display detected Tailscale & LAN addresses
-#   --relay <host>    redirect AnyNet relay server
-#   --lossless        force DeskRT capability bit 33 (lossless RLE+LZ codec)
-#   --fps <n>         cap captured FPS before encoding
 
 add_executable(AnyHandesk ${SOURCES})
 
@@ -57,7 +49,6 @@ target_link_libraries(AnyHandesk PRIVATE
     ws2_32
     crypt32
     version
-    iphlpapi
 )
 
 # Post-build: copy core DLL next to executable

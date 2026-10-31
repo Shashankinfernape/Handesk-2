@@ -2088,26 +2088,6 @@
     .line 283
     iput-object v5, v1, Lcom/anydesk/anydeskandroid/gui/fragment/MainFragment;->W0:Lcom/anydesk/anydeskandroid/gui/element/AdEditText;
 
-    if-eqz v5, :cond_handesk_skip
-
-    const-string v6, "Host IP:Port (e.g. 10.43.147.181:7070)"
-
-    invoke-virtual {v5, v6}, Lv6;->setHint(Ljava/lang/String;)V
-
-    const-string v6, "10.43.147.181:7070"
-
-    const/4 v7, 0x0
-
-    invoke-virtual {v5, v6, v7}, Lcom/anydesk/anydeskandroid/gui/element/AdEditText;->l(Ljava/lang/String;Z)V
-
-    new-instance v6, Lcom/anydesk/anydeskandroid/HandeskModeToggle;
-
-    invoke-direct {v6, v5}, Lcom/anydesk/anydeskandroid/HandeskModeToggle;-><init>(Lcom/anydesk/anydeskandroid/gui/element/AdEditText;)V
-
-    invoke-virtual {v5, v6}, Landroid/view/View;->setOnLongClickListener(Landroid/view/View$OnLongClickListener;)V
-
-    :cond_handesk_skip
-
     .line 284
     .line 285
     const v5, 0x7f0903ab
