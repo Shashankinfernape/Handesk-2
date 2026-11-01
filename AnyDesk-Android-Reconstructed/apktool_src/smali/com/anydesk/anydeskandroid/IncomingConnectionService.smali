@@ -488,7 +488,7 @@
 
     .line 107
     .line 108
-    const/4 v0, 0x0
+    const v0, 0x40000020
 
     .line 109
     const/4 v14, 0x0
@@ -561,6 +561,8 @@
     .line 141
     .line 142
     if-lt v5, v6, :cond_1
+
+    const v0, 0x40000020
 
     .line 143
     .line 144

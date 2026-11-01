@@ -43,23 +43,44 @@
     .line 5
     iget-object v2, p0, Llj;->a:Lmj;
 
-    .line 6
-    .line 7
     invoke-virtual {v2}, Lmj;->c()I
 
-    .line 8
-    .line 9
-    .line 10
     move-result v2
 
-    .line 11
+    const/4 v3, 0x2
+
+    if-ne v2, v3, :cond_check3
+
+    iget-object v2, p0, Llj;->a:Lmj;
+
     const/4 v3, 0x3
 
-    .line 12
+    invoke-virtual {v2, v3}, Lmj;->i(I)V
+
+    :cond_check3
+    iget-object v2, p0, Llj;->a:Lmj;
+
+    invoke-virtual {v2}, Lmj;->c()I
+
+    move-result v2
+
+    const/4 v3, 0x3
+
     if-eq v2, v3, :cond_0
 
-    .line 13
-    .line 14
+    :try_start_drain
+    invoke-virtual {p1}, Landroid/media/ImageReader;->acquireLatestImage()Landroid/media/Image;
+
+    move-result-object v2
+
+    if-eqz v2, :cond_drain_done
+
+    invoke-virtual {v2}, Landroid/media/Image;->close()V
+    :try_end_drain
+    .catch Ljava/lang/Exception; {:try_start_drain .. :try_end_drain} :catch_drain
+
+    :cond_drain_done
+    :catch_drain
     goto/16 :goto_7
 
     .line 15
@@ -643,12 +664,24 @@
     .line 262
     invoke-static {v1, p1, v5, v3, v0}, Lcom/anydesk/jni/JniAdExt;->R1(ILjava/nio/ByteBuffer;III)Z
 
-    .line 263
-    .line 264
-    .line 265
     move-result p1
 
-    .line 266
+    const-string v6, "AnyDesk_Log"
+
+    new-instance v8, Ljava/lang/StringBuilder;
+
+    const-string v9, "onImageAvailable: dispatched frame to JniAdExt.R1 -> "
+
+    invoke-direct {v8, v9}, Ljava/lang/StringBuilder;-><init>(Ljava/lang/String;)V
+
+    invoke-virtual {v8, p1}, Ljava/lang/StringBuilder;->append(Z)Ljava/lang/StringBuilder;
+
+    invoke-virtual {v8}, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
+
+    move-result-object v8
+
+    invoke-static {v6, v8}, Landroid/util/Log;->i(Ljava/lang/String;Ljava/lang/String;)I
+
     if-eqz p1, :cond_5
 
     .line 267

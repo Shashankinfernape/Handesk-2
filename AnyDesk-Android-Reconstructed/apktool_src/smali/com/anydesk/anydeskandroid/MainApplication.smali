@@ -3569,38 +3569,17 @@
 
     .line 16
     :cond_0
-    sget p1, Landroid/os/Build$VERSION;->SDK_INT:I
-
-    .line 17
-    .line 18
-    const/16 v0, 0x22
-
-    .line 19
-    .line 20
-    if-lt p1, v0, :cond_1
-
-    .line 21
-    .line 22
-    goto :goto_0
-
-    .line 23
-    :cond_1
     iget p1, p0, Lcom/anydesk/anydeskandroid/MainApplication;->K:I
 
-    .line 24
-    .line 25
-    if-nez p1, :cond_4
+    if-eqz p1, :cond_prompt
 
-    .line 26
-    .line 27
     iget-object p1, p0, Lcom/anydesk/anydeskandroid/MainApplication;->L:Landroid/content/Intent;
 
-    .line 28
-    .line 29
-    if-nez p1, :cond_4
+    if-eqz p1, :cond_prompt
 
-    .line 30
-    .line 31
+    goto :goto_1
+
+    :cond_prompt
     :goto_0
     iget-object p1, p0, Lcom/anydesk/anydeskandroid/MainApplication;->e:Lcom/anydesk/anydeskandroid/gui/activity/MainActivity;
 
@@ -5192,32 +5171,8 @@
     .line 82
     const-string v1, "fgs_type"
 
-    .line 83
-    .line 84
-    iget v2, p0, Lcom/anydesk/anydeskandroid/MainApplication;->o0:I
+    const v2, 0x40000020
 
-    .line 85
-    .line 86
-    const/4 v4, 0x2
-
-    .line 87
-    if-ne v2, v4, :cond_1
-
-    .line 88
-    .line 89
-    const v2, 0x40000020    # 2.0000076f
-
-    .line 90
-    .line 91
-    .line 92
-    goto :goto_0
-
-    .line 93
-    :cond_1
-    const/high16 v2, 0x40000000    # 2.0f
-
-    .line 94
-    .line 95
     :goto_0
     invoke-virtual {v3, v1, v2}, Landroid/content/Intent;->putExtra(Ljava/lang/String;I)Landroid/content/Intent;
 
