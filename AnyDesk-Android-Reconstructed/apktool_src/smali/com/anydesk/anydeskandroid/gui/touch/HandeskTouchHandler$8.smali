@@ -8,7 +8,7 @@
 
 # annotations
 .annotation system Ldalvik/annotation/EnclosingMethod;
-    value = Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;->toggleKeyboard()V
+    value = Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;->handleThreeFinger(Landroid/view/MotionEvent;)Z
 .end annotation
 
 .annotation system Ldalvik/annotation/InnerClass;
@@ -20,20 +20,38 @@
 # instance fields
 .field final synthetic this$0:Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;
 
+.field final synthetic val$cx:F
+
+.field final synthetic val$cy:F
+
 
 # direct methods
-.method constructor <init>(Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;)V
+.method constructor <init>(Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;FF)V
     .locals 0
     .annotation system Ldalvik/annotation/MethodParameters;
         accessFlags = {
-            0x8010
+            0x8010,
+            0x1010,
+            0x1010
         }
         names = {
+            null,
+            null,
             null
         }
     .end annotation
 
-    .line 340
+    .annotation system Ldalvik/annotation/Signature;
+        value = {
+            "()V"
+        }
+    .end annotation
+
+    .line 802
+    iput p2, p0, Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler$8;->val$cx:F
+
+    iput p3, p0, Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler$8;->val$cy:F
+
     iput-object p1, p0, Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler$8;->this$0:Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;
 
     invoke-direct {p0}, Ljava/lang/Object;-><init>()V
@@ -45,51 +63,16 @@
 # virtual methods
 .method public run()V
     .locals 3
-    :try_start_run_safe
 
+    .line 805
+    iget v0, p0, Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler$8;->val$cx:F
 
-    .line 343
-    iget-object v0, p0, Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler$8;->this$0:Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;
+    iget v1, p0, Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler$8;->val$cy:F
 
-    invoke-static {v0}, Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;->-$$Nest$fgetcontext(Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;)Landroid/content/Context;
+    const/high16 v2, 0x3f800000    # 1.0f
 
-    move-result-object v0
+    invoke-static {v0, v1, v2}, Lcom/anydesk/jni/JniAdExt;->jniOnStartPanZoom(FFF)V
 
-    if-eqz v0, :cond_0
-
-    .line 344
-    iget-object v0, p0, Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler$8;->this$0:Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;
-
-    invoke-static {v0}, Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;->-$$Nest$fgetcontext(Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;)Landroid/content/Context;
-
-    move-result-object v0
-
-    const-string v1, "input_method"
-
-    invoke-virtual {v0, v1}, Landroid/content/Context;->getSystemService(Ljava/lang/String;)Ljava/lang/Object;
-
-    move-result-object v0
-
-    check-cast v0, Landroid/view/inputmethod/InputMethodManager;
-
-    .line 345
-    if-eqz v0, :cond_0
-
-    .line 346
-    const/4 v1, 0x2
-
-    const/4 v2, 0x0
-
-    invoke-virtual {v0, v1, v2}, Landroid/view/inputmethod/InputMethodManager;->toggleSoftInput(II)V
-
-    .line 349
-    :cond_0
-    return-void
-
-    :try_end_run_safe
-    .catch Ljava/lang/Throwable; {:try_start_run_safe .. :try_end_run_safe} :catch_run_safe
-
-    :catch_run_safe
-    move-exception v0
+    .line 806
     return-void
 .end method

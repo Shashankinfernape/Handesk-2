@@ -8,7 +8,7 @@
 
 # annotations
 .annotation system Ldalvik/annotation/EnclosingMethod;
-    value = Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;->sendMouseButton(IFF)V
+    value = Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;->triggerDirectZoom(FFF)V
 .end annotation
 
 .annotation system Ldalvik/annotation/InnerClass;
@@ -18,15 +18,17 @@
 
 
 # instance fields
-.field final synthetic val$buttonState:I
+.field final synthetic this$0:Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;
 
-.field final synthetic val$x:F
+.field final synthetic val$cx:F
 
-.field final synthetic val$y:F
+.field final synthetic val$cy:F
+
+.field final synthetic val$scale:F
 
 
 # direct methods
-.method constructor <init>(Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;IFF)V
+.method constructor <init>(Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;FFF)V
     .locals 0
     .annotation system Ldalvik/annotation/MethodParameters;
         accessFlags = {
@@ -49,12 +51,14 @@
         }
     .end annotation
 
-    .line 389
-    iput p2, p0, Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler$11;->val$buttonState:I
+    .line 873
+    iput p2, p0, Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler$11;->val$cx:F
 
-    iput p3, p0, Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler$11;->val$x:F
+    iput p3, p0, Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler$11;->val$cy:F
 
-    iput p4, p0, Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler$11;->val$y:F
+    iput p4, p0, Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler$11;->val$scale:F
+
+    iput-object p1, p0, Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler$11;->this$0:Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;
 
     invoke-direct {p0}, Ljava/lang/Object;-><init>()V
 
@@ -65,25 +69,28 @@
 # virtual methods
 .method public run()V
     .locals 3
-    :try_start_run_safe
 
+    .line 876
+    iget v0, p0, Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler$11;->val$cx:F
 
-    .line 392
-    iget v0, p0, Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler$11;->val$buttonState:I
+    iget v1, p0, Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler$11;->val$cy:F
 
-    iget v1, p0, Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler$11;->val$x:F
+    const/high16 v2, 0x3f800000    # 1.0f
 
-    iget v2, p0, Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler$11;->val$y:F
+    invoke-static {v0, v1, v2}, Lcom/anydesk/jni/JniAdExt;->jniOnStartPanZoom(FFF)V
 
-    invoke-static {v0, v1, v2}, Lcom/anydesk/jni/JniAdExt;->jniOnMouse(IFF)V
+    .line 877
+    iget v0, p0, Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler$11;->val$cx:F
 
-    .line 393
-    return-void
+    iget v1, p0, Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler$11;->val$cy:F
 
-    :try_end_run_safe
-    .catch Ljava/lang/Throwable; {:try_start_run_safe .. :try_end_run_safe} :catch_run_safe
+    iget v2, p0, Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler$11;->val$scale:F
 
-    :catch_run_safe
-    move-exception v0
+    invoke-static {v0, v1, v2}, Lcom/anydesk/jni/JniAdExt;->jniOnPanZoom(FFF)V
+
+    .line 878
+    invoke-static {}, Lcom/anydesk/jni/JniAdExt;->jniOnEndPanZoom()V
+
+    .line 879
     return-void
 .end method

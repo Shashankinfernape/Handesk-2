@@ -7,8 +7,8 @@
 
 
 # annotations
-.annotation system Ldalvik/annotation/EnclosingMethod;
-    value = Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;->onTouch(Landroid/view/View;Landroid/view/MotionEvent;)Z
+.annotation system Ldalvik/annotation/EnclosingClass;
+    value = Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;
 .end annotation
 
 .annotation system Ldalvik/annotation/InnerClass;
@@ -33,7 +33,7 @@
         }
     .end annotation
 
-    .line 230
+    .line 175
     iput-object p1, p0, Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler$4;->this$0:Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;
 
     invoke-direct {p0}, Ljava/lang/Object;-><init>()V
@@ -45,35 +45,72 @@
 # virtual methods
 .method public run()V
     .locals 4
-    :try_start_run_safe
 
+    .line 178
+    iget-object v0, p0, Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler$4;->this$0:Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;
 
-    .line 233
+    invoke-static {v0}, Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;->access$400(Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;)I
+
+    move-result v0
+
+    const/4 v1, 0x2
+
+    if-ne v0, v1, :cond_0
+
+    .line 179
+    iget-object v0, p0, Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler$4;->this$0:Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;
+
+    const/4 v1, 0x3
+
+    invoke-static {v0, v1}, Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;->access$402(Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;I)I
+
+    .line 180
     iget-object v0, p0, Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler$4;->this$0:Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;
 
     iget-object v1, p0, Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler$4;->this$0:Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;
 
-    invoke-static {v1}, Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;->-$$Nest$fgetdoubleTapStartX(Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;)F
+    invoke-static {v1}, Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;->access$1000(Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;)F
 
     move-result v1
 
     iget-object v2, p0, Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler$4;->this$0:Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;
 
-    invoke-static {v2}, Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;->-$$Nest$fgetdoubleTapStartY(Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;)F
+    invoke-static {v2}, Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;->access$1100(Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;)F
 
     move-result v2
 
     const/4 v3, 0x1
 
-    invoke-static {v0, v3, v1, v2}, Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;->-$$Nest$msendMouseClick(Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;IFF)V
+    invoke-static {v0, v3, v1, v2}, Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;->access$1200(Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;IFF)V
 
-    .line 234
-    return-void
+    .line 181
+    iget-object v0, p0, Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler$4;->this$0:Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;
 
-    :try_end_run_safe
-    .catch Ljava/lang/Throwable; {:try_start_run_safe .. :try_end_run_safe} :catch_run_safe
+    invoke-static {v0}, Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;->access$1300(Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;)V
 
-    :catch_run_safe
-    move-exception v0
+    .line 182
+    iget-object v0, p0, Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler$4;->this$0:Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;
+
+    iget-object v1, p0, Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler$4;->this$0:Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;
+
+    invoke-static {v1}, Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;->access$1000(Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;)F
+
+    move-result v1
+
+    invoke-static {v0, v1}, Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;->access$1402(Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;F)F
+
+    .line 183
+    iget-object v0, p0, Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler$4;->this$0:Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;
+
+    iget-object v1, p0, Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler$4;->this$0:Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;
+
+    invoke-static {v1}, Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;->access$1100(Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;)F
+
+    move-result v1
+
+    invoke-static {v0, v1}, Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;->access$1502(Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;F)F
+
+    .line 185
+    :cond_0
     return-void
 .end method

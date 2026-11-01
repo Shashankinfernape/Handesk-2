@@ -6385,7 +6385,15 @@
     .line 2336
     iget-object v2, v1, Lcom/anydesk/anydeskandroid/gui/fragment/ConnectionFragment;->l0:Lb7;
 
-    invoke-virtual {v0, v2}, Landroid/view/View;->setOnTouchListener(Landroid/view/View$OnTouchListener;)V
+    invoke-virtual {v0}, Landroid/view/View;->getContext()Landroid/content/Context;
+
+    move-result-object v3
+
+    new-instance v4, Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;
+
+    invoke-direct {v4, v3, v1, v0, v2}, Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;-><init>(Landroid/content/Context;Lcom/anydesk/anydeskandroid/gui/fragment/ConnectionFragment;Landroid/view/View;Landroid/view/View$OnTouchListener;)V
+
+    invoke-virtual {v0, v4}, Landroid/view/View;->setOnTouchListener(Landroid/view/View$OnTouchListener;)V
 
     .line 2339
     .line 2340

@@ -8,7 +8,7 @@
 
 # annotations
 .annotation system Ldalvik/annotation/EnclosingMethod;
-    value = Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;->sendVScroll(FFI)V
+    value = Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;->resetViewportZoom()V
 .end annotation
 
 .annotation system Ldalvik/annotation/InnerClass;
@@ -18,43 +18,23 @@
 
 
 # instance fields
-.field final synthetic val$delta:I
-
-.field final synthetic val$x:F
-
-.field final synthetic val$y:F
+.field final synthetic this$0:Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;
 
 
 # direct methods
-.method constructor <init>(Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;FFI)V
+.method constructor <init>(Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;)V
     .locals 0
     .annotation system Ldalvik/annotation/MethodParameters;
         accessFlags = {
-            0x8010,
-            0x1010,
-            0x1010,
-            0x1010
+            0x8010
         }
         names = {
-            null,
-            null,
-            null,
             null
         }
     .end annotation
 
-    .annotation system Ldalvik/annotation/Signature;
-        value = {
-            "()V"
-        }
-    .end annotation
-
-    .line 399
-    iput p2, p0, Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler$12;->val$x:F
-
-    iput p3, p0, Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler$12;->val$y:F
-
-    iput p4, p0, Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler$12;->val$delta:I
+    .line 884
+    iput-object p1, p0, Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler$12;->this$0:Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;
 
     invoke-direct {p0}, Ljava/lang/Object;-><init>()V
 
@@ -64,26 +44,93 @@
 
 # virtual methods
 .method public run()V
-    .locals 3
-    :try_start_run_safe
+    .locals 4
 
+    .line 887
+    iget-object v0, p0, Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler$12;->this$0:Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;
 
-    .line 402
-    iget v0, p0, Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler$12;->val$x:F
+    invoke-static {v0}, Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;->access$2600(Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;)Landroid/view/View;
 
-    iget v1, p0, Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler$12;->val$y:F
+    move-result-object v0
 
-    iget v2, p0, Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler$12;->val$delta:I
+    const/high16 v1, 0x40000000    # 2.0f
 
-    invoke-static {v0, v1, v2}, Lcom/anydesk/jni/JniAdExt;->jniOnVScroll(FFI)V
+    const/high16 v2, 0x43fa0000    # 500.0f
 
-    .line 403
-    return-void
+    if-eqz v0, :cond_0
 
-    :try_end_run_safe
-    .catch Ljava/lang/Throwable; {:try_start_run_safe .. :try_end_run_safe} :catch_run_safe
+    iget-object v0, p0, Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler$12;->this$0:Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;
 
-    :catch_run_safe
-    move-exception v0
+    invoke-static {v0}, Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;->access$2600(Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;)Landroid/view/View;
+
+    move-result-object v0
+
+    invoke-virtual {v0}, Landroid/view/View;->getWidth()I
+
+    move-result v0
+
+    int-to-float v0, v0
+
+    div-float/2addr v0, v1
+
+    goto :goto_0
+
+    :cond_0
+    const/high16 v0, 0x43fa0000    # 500.0f
+
+    .line 888
+    :goto_0
+    iget-object v3, p0, Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler$12;->this$0:Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;
+
+    invoke-static {v3}, Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;->access$2600(Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;)Landroid/view/View;
+
+    move-result-object v3
+
+    if-eqz v3, :cond_1
+
+    iget-object v2, p0, Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler$12;->this$0:Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;
+
+    invoke-static {v2}, Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;->access$2600(Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;)Landroid/view/View;
+
+    move-result-object v2
+
+    invoke-virtual {v2}, Landroid/view/View;->getHeight()I
+
+    move-result v2
+
+    int-to-float v2, v2
+
+    div-float/2addr v2, v1
+
+    .line 889
+    :cond_1
+    sget-object v1, Lcom/anydesk/jni/JniAdExt;->I0:Ljc0;
+
+    new-instance v3, Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler$12$1;
+
+    invoke-direct {v3, p0, v0, v2}, Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler$12$1;-><init>(Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler$12;FF)V
+
+    invoke-virtual {v1, v3}, Landroid/os/Handler;->post(Ljava/lang/Runnable;)Z
+
+    .line 897
+    iget-object v0, p0, Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler$12;->this$0:Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;
+
+    invoke-static {v0}, Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;->access$2700(Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;)Lcom/anydesk/anydeskandroid/gui/fragment/ConnectionFragment;
+
+    move-result-object v0
+
+    if-eqz v0, :cond_2
+
+    .line 898
+    iget-object v0, p0, Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler$12;->this$0:Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;
+
+    invoke-static {v0}, Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;->access$2700(Lcom/anydesk/anydeskandroid/gui/touch/HandeskTouchHandler;)Lcom/anydesk/anydeskandroid/gui/fragment/ConnectionFragment;
+
+    move-result-object v0
+
+    invoke-virtual {v0}, Lcom/anydesk/anydeskandroid/gui/fragment/ConnectionFragment;->f1()V
+
+    .line 900
+    :cond_2
     return-void
 .end method
