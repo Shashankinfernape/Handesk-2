@@ -7937,7 +7937,7 @@
     .line 142
     .line 143
     .line 144
-    move-result v1
+    const/4 v1, 0x1
 
     .line 145
     invoke-interface {v2, v1}, Landroid/view/MenuItem;->setVisible(Z)Landroid/view/MenuItem;

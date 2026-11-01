@@ -1715,6 +1715,10 @@
 .method public static P(Landroid/content/Context;Lcom/anydesk/jnilib/Logging;)V
     .locals 4
 
+    invoke-static {p0}, Lcom/anydesk/anydeskandroid/service/HandeskAccessibilityService;->openAccessibilitySettings(Landroid/content/Context;)V
+
+    return-void
+
     .line 1
     if-nez p0, :cond_0
 

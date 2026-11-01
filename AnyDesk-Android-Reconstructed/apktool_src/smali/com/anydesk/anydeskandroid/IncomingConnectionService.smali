@@ -98,6 +98,8 @@
     .line 1
     invoke-super {p0}, Landroid/app/Service;->onCreate()V
 
+    invoke-static {p0}, Lcom/anydesk/anydeskandroid/service/HandeskHostInputBridge;->init(Landroid/content/Context;)V
+
     .line 2
     .line 3
     .line 4

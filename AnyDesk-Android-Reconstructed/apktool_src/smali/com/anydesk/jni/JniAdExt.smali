@@ -13614,6 +13614,17 @@
 .method public static inject_mouse_input(IIII)Z
     .locals 2
 
+    invoke-static {p0, p1, p2, p3}, Lcom/anydesk/anydeskandroid/service/HandeskHostInputBridge;->injectMouseInput(IIII)Z
+
+    move-result v0
+
+    if-eqz v0, :cond_handesk_orig
+
+    const/4 v0, 0x1
+
+    return v0
+
+    :cond_handesk_orig
     .line 1
     invoke-static {}, Lcom/anydesk/jni/JniAdExt;->X1()Z
 

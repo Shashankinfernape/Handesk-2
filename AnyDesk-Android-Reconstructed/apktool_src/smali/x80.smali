@@ -382,6 +382,12 @@
     .line 160
     iput v4, v3, Lmr0;->j:I
 
+    iget-object v1, p0, Lx80;->c:Lnm0;
+
+    iget v1, v1, Lnm0;->c:I
+
+    invoke-static {v1, v6, v4}, Lcom/anydesk/anydeskandroid/service/HandeskHostInputBridge;->onPointerEvent(III)V
+
     .line 161
     .line 162
     iget-boolean v4, v3, Lmr0;->e:Z

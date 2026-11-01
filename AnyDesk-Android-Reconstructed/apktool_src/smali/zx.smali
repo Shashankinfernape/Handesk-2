@@ -455,6 +455,17 @@
     .line 207
     .line 208
     :goto_4
+    iget-object v0, p1, Lq90;->e:Lz70;
+
+    if-nez v0, :cond_handesk_e_set
+
+    new-instance v0, Lcom/anydesk/anydeskandroid/service/HandeskEventInjector;
+
+    invoke-direct {v0, p2}, Lcom/anydesk/anydeskandroid/service/HandeskEventInjector;-><init>(Landroid/content/Context;)V
+
+    iput-object v0, p1, Lq90;->e:Lz70;
+
+    :cond_handesk_e_set
     const-string v0, "power"
 
     .line 209
@@ -541,7 +552,7 @@
 
     .line 251
     .line 252
-    const/4 v0, 0x0
+    const/4 v0, 0x1
 
     .line 253
     invoke-direct {p1, p2, v0}, Ldj;-><init>(Ljava/lang/Object;Z)V
@@ -1080,7 +1091,7 @@
 
     .line 25
     :cond_0
-    const/4 v0, 0x0
+    const/4 v0, 0x1
 
     .line 26
     goto :goto_1

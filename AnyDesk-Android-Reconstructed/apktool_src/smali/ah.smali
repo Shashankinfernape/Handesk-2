@@ -2203,6 +2203,18 @@
 .method public m(Luq;)Z
     .locals 3
 
+    invoke-static {}, Lcom/anydesk/anydeskandroid/service/HandeskAccessibilityService;->isRunning()Z
+
+    move-result v0
+
+    if-eqz v0, :cond_handesk_m_orig
+
+    const/4 v0, 0x1
+
+    return v0
+
+    :cond_handesk_m_orig
+
     .line 1
     const/4 v0, 0x0
 
@@ -2606,6 +2618,18 @@
 
 .method public p()Z
     .locals 8
+
+    invoke-static {}, Lcom/anydesk/anydeskandroid/service/HandeskAccessibilityService;->isRunning()Z
+
+    move-result v0
+
+    if-eqz v0, :cond_handesk_p_orig
+
+    const/4 v0, 0x0
+
+    return v0
+
+    :cond_handesk_p_orig
 
     .line 1
     iget-object v0, p0, Lah;->c:Ljava/lang/Object;
