@@ -62,19 +62,21 @@ public:
     static bool isLosslessForced();
 
 private:
-    static void*        s_imageBase;
-    static size_t       s_imageSize;
-    static bool         s_installed;
-    static bool         s_losslessForced;
+    static void*         s_imageBase;
+    static size_t        s_imageSize;
+    static bool          s_installed;
+    static bool          s_losslessForced;
     static FrameCallback s_frameCallback;
-    static int          s_maxFps;
+    static int           s_maxFps;
 
-    // Trampoline bytes saved during hook installation
+    // Trampoline pointers and saved bytes
+    static void*   s_encoderInitTrampolinePtr;
+    static void*   s_callerTrampolinePtr;
     static uint8_t s_encoderInitTrampoline[16];
     static uint8_t s_callerTrampoline[16];
 
     // Internal helpers
-    static bool hookFunction(uintptr_t va, void* hookFn, uint8_t* savedBytes, size_t nBytes);
+    static bool hookFunction(uintptr_t va, void* hookFn, uint8_t* savedBytes, size_t nBytes, void** outTrampoline);
     static void* resolveVA(uint32_t va);
 
     // Hook implementations (called by the trampoline)

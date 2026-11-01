@@ -3631,28 +3631,10 @@
 
     .line 45
     :cond_2
-    invoke-static {}, Lcom/anydesk/jni/JniAdExt;->i3()Z
-
-    .line 46
-    .line 47
-    .line 48
-    move-result p1
-
-    .line 49
-    if-eqz p1, :cond_3
-
-    .line 50
-    .line 51
     const/16 p1, 0x8
 
-    .line 52
-    .line 53
     invoke-virtual {p0, p1}, Lcom/anydesk/anydeskandroid/MainApplication;->T(I)Z
 
-    .line 54
-    .line 55
-    .line 56
-    :cond_3
     return-void
 
     .line 57
@@ -4965,7 +4947,7 @@
     .line 10
     .line 11
     .line 12
-    const/high16 v2, 0x10000000
+    const v2, 0x34000000
 
     .line 13
     .line 14

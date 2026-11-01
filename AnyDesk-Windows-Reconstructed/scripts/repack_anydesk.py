@@ -57,14 +57,8 @@ def repack_anydesk(orig_exe_path, raw_core_path, out_exe_path, patch_relay=None,
     else:
         print("      No relay patch requested (using original configuration)")
 
-    # [PATCH] Neutralize and strip red Free License banner
-    print("      [PATCH] Stripping Free License banner and neutralizing red headers...")
-    func_offsets = [0x009098D0, 0x009B02F0, 0x009092D0, 0x009B0A20]
-    for off in func_offsets:
-        if off + 3 <= len(core_data):
-            core_data[off:off+3] = b"\xB0\x01\xC3" # mov al, 1; ret
-    
-    # Replace banner color #FB4137FF (red) with #00000000 (transparent)
+    # [PATCH] Neutralize Free License banner color
+    print("      [PATCH] Neutralizing Free License banner color...")
     idx = 0
     while True:
         pos = core_data.find(b"#FB4137FF", idx)
@@ -85,28 +79,9 @@ def repack_anydesk(orig_exe_path, raw_core_path, out_exe_path, patch_relay=None,
             core_data[eq_pos:end] = b" " * (end - eq_pos)
             idx = end
 
-    # [PATCH] Neutralize connection status banner (Connecting / Disconnected)
-    print("      [PATCH] Bypassing connection status banner...")
-    p1 = 0x006C7196
-    core_data[p1:p1+23] = b"\xE9\x12\x00\x00\x00" + b"\x90" * 18
-    p2 = 0x006D0DDE
-    core_data[p2:p2+33] = b"\xE9\x1C\x00\x00\x00" + b"\x90" * 28
-
-    # Blank out status strings
-    for prefix in [b"ad.status.app.connecting=", b"ad.status.app.disconnected=", b"ad.status.app.closed=", b"ad.connect.webhelp="]:
-        idx = 0
-        while True:
-            pos = core_data.find(prefix, idx)
-            if pos == -1: break
-            eq_pos = pos + len(prefix)
-            end = eq_pos
-            while end < len(core_data) and core_data[end] not in (10, 13, 0):
-                end += 1
-            core_data[eq_pos:end] = b" " * (end - eq_pos)
-            idx = end
-
     # Neutralize official server domains
-    domains = [b"boot.net.anydesk.com", b"relay.net.anydesk.com", b"crash.anydesk.com"]
+    # Keep boot and relay intact for network/session signaling
+    domains = [b"crash.anydesk.com"]
     for d in domains:
         idx = 0
         while True:

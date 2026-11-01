@@ -13,15 +13,20 @@
 #include <iostream>
 #include <cstring>
 
+using EncoderInitFn = void(__stdcall*)(void*, uint32_t, uint32_t, uint32_t, uint32_t);
+using CallerDispatchFn = void(__stdcall*)(void*, uint8_t*, int, int, int, int);
+
 // ---------------------------------------------------------------------------
 // Static member initialisation
 // ---------------------------------------------------------------------------
-void*         DeskRTHook::s_imageBase         = nullptr;
-size_t        DeskRTHook::s_imageSize         = 0;
-bool          DeskRTHook::s_installed         = false;
-bool          DeskRTHook::s_losslessForced    = false;
-FrameCallback DeskRTHook::s_frameCallback     = nullptr;
-int           DeskRTHook::s_maxFps            = 0;
+void*         DeskRTHook::s_imageBase              = nullptr;
+size_t        DeskRTHook::s_imageSize              = 0;
+bool          DeskRTHook::s_installed              = false;
+bool          DeskRTHook::s_losslessForced         = false;
+FrameCallback DeskRTHook::s_frameCallback          = nullptr;
+int           DeskRTHook::s_maxFps                 = 0;
+void*         DeskRTHook::s_encoderInitTrampolinePtr = nullptr;
+void*         DeskRTHook::s_callerTrampolinePtr      = nullptr;
 uint8_t       DeskRTHook::s_encoderInitTrampoline[16] = {};
 uint8_t       DeskRTHook::s_callerTrampoline[16]      = {};
 
@@ -41,8 +46,9 @@ void* DeskRTHook::resolveVA(uint32_t va) {
 
 // ---------------------------------------------------------------------------
 // Internal: write a 5-byte relative JMP hook at `target`, saving old bytes
+// and constructing an executable trampoline with stolen bytes + JMP back
 // ---------------------------------------------------------------------------
-bool DeskRTHook::hookFunction(uintptr_t va, void* hookFn, uint8_t* savedBytes, size_t nBytes) {
+bool DeskRTHook::hookFunction(uintptr_t va, void* hookFn, uint8_t* savedBytes, size_t nBytes, void** outTrampoline) {
     void* target = resolveVA(static_cast<uint32_t>(va));
     if (!target) {
         std::cerr << "[DeskRTHook] VA 0x" << std::hex << va << " out of range.\n";
@@ -57,6 +63,18 @@ bool DeskRTHook::hookFunction(uintptr_t va, void* hookFn, uint8_t* savedBytes, s
 
     // Save original bytes
     memcpy(savedBytes, target, nBytes);
+
+    // Build executable trampoline: stolen bytes + JMP back to target + nBytes
+    if (outTrampoline) {
+        uint8_t* tramp = reinterpret_cast<uint8_t*>(VirtualAlloc(nullptr, 64, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE));
+        if (tramp) {
+            memcpy(tramp, target, nBytes);
+            tramp[nBytes] = 0xE9; // JMP opcode
+            intptr_t jmpBack = (reinterpret_cast<uint8_t*>(target) + nBytes) - (tramp + nBytes + 5);
+            memcpy(tramp + nBytes + 1, &jmpBack, 4);
+            *outTrampoline = tramp;
+        }
+    }
 
     // Write E9 xx xx xx xx (relative JMP to hookFn)
     uint8_t* dst = reinterpret_cast<uint8_t*>(target);
@@ -100,6 +118,11 @@ void __stdcall DeskRTHook::onEncoderInit(
             std::cout << "[DeskRTHook] Capability bitmask patched -> LOSSLESS enabled.\n";
         }
     }
+
+    // Call original function via trampoline
+    if (s_encoderInitTrampolinePtr) {
+        reinterpret_cast<EncoderInitFn>(s_encoderInitTrampolinePtr)(context, sessionId, width, height, fps);
+    }
 }
 
 // ---------------------------------------------------------------------------
@@ -129,6 +152,11 @@ void __stdcall DeskRTHook::onCallerDispatch(
         bool proceed = s_frameCallback(pixels, w, h, stride);
         if (!proceed) return;
     }
+
+    // Call original function via trampoline
+    if (s_callerTrampolinePtr) {
+        reinterpret_cast<CallerDispatchFn>(s_callerTrampolinePtr)(videoSession, pixels, w, h, stride, format);
+    }
 }
 
 // ---------------------------------------------------------------------------
@@ -141,9 +169,9 @@ bool DeskRTHook::install(void* imageBase, size_t imageSize) {
 
     bool ok = true;
     ok &= hookFunction(VA_WIN_DESKRT_ENCODER_INIT, reinterpret_cast<void*>(&onEncoderInit),
-                       s_encoderInitTrampoline, 8);
+                       s_encoderInitTrampoline, 8, &s_encoderInitTrampolinePtr);
     ok &= hookFunction(VA_WIN_DESKRT_CALLER,       reinterpret_cast<void*>(&onCallerDispatch),
-                       s_callerTrampoline, 8);
+                       s_callerTrampoline, 8, &s_callerTrampolinePtr);
 
     s_installed = ok;
     return ok;
